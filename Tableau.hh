@@ -148,9 +148,12 @@ operator=(const Tableau<T>& tab) {
 template<typename T>
 std::ostream&
 operator<<(std::ostream& o, const Tableau<T>& tab) {
-	for (int i=0; i<tab.taille(); i++)
-		o << tab[i] << " ";
-	o << std::endl;
+	o << "[";
+	for (int i=0; i<tab.taille()-1; i++)
+		o << tab[i] << ", ";
+	if (tab.taille() > 0)
+		o << tab[tab.taille()-1];
+	o << "]" << std::endl;
 	return o;
 }
 
