@@ -153,7 +153,7 @@ operator<<(std::ostream& o, const Tableau<T>& tab) {
 		o << tab[i] << ", ";
 	if (tab.taille() > 0)
 		o << tab[tab.taille()-1];
-	o << "]" << std::endl;
+	o << "]";
 	return o;
 }
 

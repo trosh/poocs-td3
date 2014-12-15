@@ -7,11 +7,11 @@ N2::N2(int x, int y)
 : _x(x),
   _y(y) { }
 
-int N2::x() {
+int N2::x() const {
 	return _x;
 }
 
-int N2::y() {
+int N2::y() const {
 	return _y;
 }
 
