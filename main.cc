@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Tableau.hh"
+#include "N2.hh"
 
 typedef struct { double r, i; } C;
 
@@ -21,5 +22,7 @@ int main() {
 	Tableau<C> tab2 = tab;
 	tab.~Tableau<C>();
 	std::cout << tab2;
+	N2 p(2, 4), q(4, 2);
+	std::cout << p+q << std::endl;
 	return 0;
 }
