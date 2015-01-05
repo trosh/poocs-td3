@@ -4,17 +4,10 @@ Pixel::Pixel()
 : N2(), _c(0) {}
 
 Pixel::Pixel(int x, int y, col c)
-: N2(x, y), _c(c) {
-	if (c<0 || c>255)
-		throw BadValue;
-}
+: N2(x, y), _c(c) {}
 
 Pixel::Pixel(const N2& p, col c)
-: N2(p.x(), p.y()),
-  _c(c) {
-	if (c<0 || c>255)
-		throw BadValue;
-}
+: N2(p.x(), p.y()), _c(c) {}
 
 col Pixel::couleur(int x, int y) const {
 	return _c;

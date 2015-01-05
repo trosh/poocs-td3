@@ -95,7 +95,7 @@ template<typename T>
 void
 Tableau<T>::
 retaille(int taille) {
-	assert(taille > 0);
+	assert(taille >= 0);
 	if (taille > _capacite)
 		reserve(2*_capacite);
 	_taille = taille;

@@ -1,7 +1,7 @@
 #ifndef PIXEL_HH
 #define PIXEL_HH
 
-#include "N2.hh"
+#include <N2.hh>
 
 typedef int col;
 
@@ -12,6 +12,7 @@ public:
 	Pixel();
 	Pixel(int, int, col);
 	Pixel(const N2&, col);
+	~Pixel() {}
 	col couleur(int, int) const;
 	Pixel operator+(const Pixel&) const;
 	Pixel operator-(const Pixel&) const;

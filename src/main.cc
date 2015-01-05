@@ -1,7 +1,8 @@
 #include <iostream>
-#include "Tableau.hh"
-#include "N2.hh"
-#include "Pixel.hh"
+#include <Tableau.hh>
+#include <N2.hh>
+#include <Pixel.hh>
+#include <Triangle.hh>
 
 typedef struct { double r, i; } C;
 
@@ -46,5 +47,16 @@ int main() {
 	tabp.ajoute(P2);
 	tabp.ajoute((P1+P2)/2);
 	cout << tabp << endl;
+	// TRIANGLES
+	cout << endl << "TABLEAU (BARYCENTRE)" << endl;
+	Triangle T(tabp[0], tabp[1], tabp[2]);
+	tabp.ajoute(T.barycentre());
+	cout << tabp << endl;
+	// CIRCONSCRIT
+	cout << endl << "CIRCONSCRIT" << endl;
+	T = Triangle(Pixel(0, 0, 0),
+	             Pixel(3, 0, 0),
+	             Pixel(0, 3, 0));
+	cout << T.cercleCirconscritContient(N2(0, 0)) << endl;
 	return 0;
 }

@@ -4,8 +4,7 @@
 #include <iostream>
 
 enum Error {
-	DivideByZero,
-	BadValue
+	DivideByZero
 };
 
 class N2 {
@@ -20,6 +19,7 @@ public:
 	N2 operator+(const N2&) const;
 	N2 operator-(const N2&) const;
 	N2 operator/(int) const;
+	bool operator==(const N2&) const;
 friend std::ostream& operator<<(std::ostream&, const N2&);
 };
 
