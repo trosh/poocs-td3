@@ -12,34 +12,38 @@ private:
 	const char * m_msg;
 };
 
-class PGMImage {
-public:
-	PGMImage(const char * filename) throw (PGMException);
-	~PGMImage() { delete[] m_data; }
+class Image {
 private:
-	// sans cette signature le compilateur aurait inféré une implementation
+	// sans cette signature le compilateur aurait inféré une implémentation
 	// automatique de la construction par copie
-	// on devalue le sens de cette construction avec une signature fantome
-	PGMImage(const PGMImage &);
-	PGMImage & operator=(const PGMImage &);
-public:
-	// ces methodes n'ont quasiment aucun cout, il est logique d'indiquer
-	// au compilateur de ne pas leur affubler un overhead de fonction c
-	inline unsigned width() const { return m_width; }
-	inline unsigned height() const { return m_height; }
-	inline unsigned maxval() const { return m_maxval; }
-	// on prevoit qu'il faudra faire beaucoup de sommes de couleurs,
-	// on s'authorise a overflow au cours de l'operation en renvoyant
-	// un int plutot qu'un char
-	inline unsigned int operator()(int i, int j) const {
-		return m_data[i*m_width+j];
-	}
-private:
+	// on dévalue le sens de cette construction avec une signature fantôme
+	Image(const Image&);
+	Image & operator=(const PGMImage&);
 	unsigned m_width;
 	unsigned m_height;
 	unsigned m_maxval;
 	unsigned char * m_data;
+public:
+	Image();
+	Image(int, int);
+	Image(const PGMImage&);
+	~Image() { delete[] _cont; }
+	// ces methodes n'ont quasiment aucun cout, il est logique d'indiquer
+	// au compilateur de ne pas leur affubler un overhead de fonction c
+	inline unsigned width() const { return _w; }
+	inline unsigned height() const { return _h; }
+	// on prévoit qu'il faudra faire beaucoup de sommes de couleurs,
+	// on s'authorise à overflow au cours de l'opération en renvoyant
+	// un int plutôt qu'un char
+	inline unsigned operator()(int i, int j) const {
+		return _cont[i*m_width+j];
+	}
 };
+
+class PGMImage {
+public:
+	Image toImage(const char * filename) throw (PGMException);
+}
 
 PGMImage::PGMImage(const char * filename) throw (PGMException)
 : m_width(0), m_height(0),

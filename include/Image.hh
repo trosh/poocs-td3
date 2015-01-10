@@ -1,7 +1,6 @@
 #ifndef IMAGE_HH
 #define IMAGE_HH
 
-#include <Tableau.hh>
 #include <Pixel.hh>
 
 enum {
@@ -12,8 +11,12 @@ class Image {
 protected:
 	int _w;
 	int _h;
-	Tableau<Pixel> _cont;
+	Pixel * _cont;
 public:
+	Image();
+	Image(int, int);
+	Image(const PGMImage&);
+	~Image();
 	pixel(const N2&) const;
 	pixel(const int&, const int&) const;
 	nbLignes() const;

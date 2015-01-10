@@ -2,7 +2,18 @@
 #include <iostream>
 #include <fstream>
 
-Maillage::Maillage(const Image& img) _image(img) { }
+Maillage::Maillage(const Image& img) _image(img) {
+	int h = img.nbLignes()-1,
+	    w = img.nbColonnes()-1;
+	Triangle T1(img.pixel(0, 0),
+	            img.pixel(0, h),
+	            img.pixel(w, 0));
+	Triangle T2(img.pixel(w, h),
+	            img.pixel(w, 0),
+	            img.pixel(0, h));
+	_tri.ajoute(T1);
+	_tri.ajoute(T2);
+}
 
 void Maillage::
 sauvegarde(const char * filename) const {
@@ -79,10 +90,8 @@ void Maillage::ajoute(const int n, const int precision) {
 	int t = 0;
 	int completed = 0;
 	for (int i=0; i<n; i++) {
-		if (t >= _tri.taille()) {
+		if (t >= _tri.taille())
 			t = 0;
-			completed = 0;
-		}
 		Pixel& p = _tri[t].barycentre();
 		if (abs(p.col() - img.pixel(p).col()) <= precision) {
 			t++;
