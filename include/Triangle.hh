@@ -3,6 +3,10 @@
 
 #include <Pixel.hh>
 
+enum TriangleError {
+	BadValue
+};
+
 class Triangle {
 protected:
 	Pixel _0;
@@ -13,7 +17,7 @@ public:
 	Triangle(const Pixel&, const Pixel&, const Pixel&);
 	~Triangle() {}
 	const Pixel barycentre() const;
-	const Pixel& operator()(const int&) const;
+	const Pixel& operator()(const int) const;
 	bool cercleCirconscritContient(const N2&) const;
 };
 

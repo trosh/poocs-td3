@@ -9,11 +9,13 @@ Triangle(const Pixel& p0, const Pixel& p1, const Pixel& p2)
 
 const Pixel Triangle::barycentre() const {
 	return Pixel((_0+_1+_2)/3,
-	             (_0.col+_1.col+_2.col)/3);
+	             (_0.couleur()
+	             +_1.couleur()
+	             +_2.couleur())/3);
 }
 
 const Pixel& Triangle::
-operator()(const int& n) const {
+operator()(const int n) const {
 	switch (n) {
 	case 0 : {
 		return _0;
@@ -29,7 +31,7 @@ operator()(const int& n) const {
 	throw BadValue;
 }
 
-inline int SQ(int n) {
+int SQ(int n) {
 	return n*n;
 }
 

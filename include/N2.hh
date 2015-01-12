@@ -14,6 +14,7 @@ protected:
 public:
 	N2();
 	N2(int, int);
+	N2(const N2&);
 	int x() const;
 	int y() const;
 	N2 operator+(const N2&) const;

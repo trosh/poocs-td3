@@ -10,13 +10,13 @@ protected:
 	col _c;
 public:
 	Pixel();
-	Pixel(int, int, col);
+	Pixel(const int, const int, const col);
 	Pixel(const N2&, col);
 	~Pixel() {}
-	col couleur(int, int) const;
+	col couleur() const;
 	Pixel operator+(const Pixel&) const;
 	Pixel operator-(const Pixel&) const;
-	Pixel operator/(int) const;
+	Pixel operator/(const int) const;
 friend std::ostream&
 operator<<(std::ostream&, const Pixel&);
 };

@@ -1,8 +1,8 @@
 CXX := g++
-CFLAGS := -Wall -Iinclude
+CFLAGS := -Wall -Iinclude -g
 RM := rm -f
-TARGETS := main pgm_example stress_tableau
-OBJECTS := N2.o Pixel.o Triangle.o
+TARGETS := main stress_tableau #pgm_example
+OBJECTS := N2.o Pixel.o Triangle.o Image.o
 
 .PHONY: all clean purge
 
@@ -17,11 +17,14 @@ Pixel.o: src/Pixel.cc include/Pixel.hh include/N2.hh
 Triangle.o: src/Triangle.cc include/Triangle.hh include/Pixel.hh include/N2.hh
 	$(CXX) $(CFLAGS) -c $<
 
+Image.o: src/Image.cc include/Image.hh include/Pixel.hh include/N2.hh
+	$(CXX) $(CFLAGS) -c $<
+
 main: src/main.cc include/Tableau.hh $(OBJECTS)
 	$(CXX) $(CFLAGS) -o $@ $(OBJECTS) $<
 
-pgm_example: src/pgm_example.cc
-	$(CXX) $(CFLAGS) -o $@ $<
+#pgm_example: src/pgm_example.cc
+#	$(CXX) $(CFLAGS) -o $@ $<
 
 stress_tableau: src/stress_tableau.cc include/stress_data.hh include/Tableau.hh
 	$(CXX) $(CFLAGS) -o $@ $<
