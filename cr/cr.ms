@@ -75,17 +75,17 @@ selon l'inclusion de leur \fIheader\fP.
 
 .PS
 box "N2"
-box "Pixel"    at 1st box + (1,   0)
+box "Pixel"    at 1st box + (1.2, 0)
 box "Image"    at 2nd box + (1,   0)
 box "Maillage" at 3rd box - (.5,  1)
 box "Triangle" at 4th box - (1.5, 0)
 box "Cavite"   at 5th box - (0,   1)
 box "Tableau"  at 6th box + (1.5, 0)
-arrow from 1st box .e  to 2nd box .w
+arrow from 1st box .e  to 2nd box .w thickness 1.7
 arrow from 2nd box .e  to 3rd box .w
 arrow from 2nd box .sw to 5th box .n
 arrow from 3rd box .s  to 4th box .n
-arrow from 5th box .e  to 4th box .w
+arrow from 5th box .e  to 4th box .w dashed
 arrow from 5th box .s  to 6th box .n
 arrow from 6th box .ne to 4th box .sw
 arrow from 7th box .n  to 4th box .s
@@ -93,13 +93,39 @@ arrow from 7th box .w  to 6th box .e
 .PE
 
 .SH
-Tableau
+Tableau (\fCTableau<T>\fP)
 .LP
+Cette classe \fCtemplate\fP nous a fait un exercice sur les classes
+génériques: on peut accéder à ou modifier une liste d'élèments
+générique. On réduit le nombre d'allocations nécessaires au passage
+à l'échelle en séparant les concepts de \fItaille\fP et de \fIcapacité\fP.
 
-Cette classe \fCtemplate\fP nous a fait un exercice de classe
-génèrique: on peut accéder à ou modifier une liste d'élèments
-génèrique. On réduit le nombre d'allocations nécessaires au passage
-à l'échelle en séparant les concepts de taille et de capacité.
+La méthode \fCretaille\fP peut faire appel à \fCreserve\fP si on demande
+une taille qui excède la capacité (on choisit de ne pas \fIréallouer vers
+le bas\fP). Comme les objets stockés sont génériques, on ne fait pas
+de réallocation à la \fCrealloc\fP, mais on fait un appel à \fCnew\fP
+et on boucle avec des appels à \fCoperator=\fP. De même lorsqu'on
+supprime un élèment on ne fait que le remplacer par le dernier;
+on fait encore un appel à \fCoperator=\fP et on appelle le constructeur
+générique pour le dernier élèment déplacé. C'est relativement lent
+par rapport à des fonctions type \fCmemcpy\fP mais on préfère
+préserver l'usage \fIPOO\fP.
+
+.SH
+N2
+.LP
+On implémente ici une classe très simple reprèsentant des coordonnées
+entières à deux dimensions, et quelques opérations de base.
+
+.SH
+Pixel
+.LP
+Cette classe hérite de \fCN2\fP et lui ajoute une valeur de couleur
+\fItypedef'd\fP à un \fCint\fP. Sachant qu'on travaille avec le
+format \fC.pgm\fP, on aurait pû stocker la couleur dans un \fCchar\fP,
+comme ce sera le cas dans une \fCImage\fP, mais pour pouvoir
+manipuler les \fCPixel\fPs avec aise on a fait ce choix.
+
 
 .DS L
 .fam C
