@@ -10,6 +10,7 @@ typedef std::map<double, Pixel> PixelOrdonnes;
 
 class Cavite {
 private:
+	Cavite();
 	Tableau<int> _anciens_triangles;
 	Tableau<Pixel> _pixels_du_contour;
 public:

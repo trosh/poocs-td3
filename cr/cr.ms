@@ -74,13 +74,13 @@ Voici un graphe d'inclusion qui représente ces classes
 selon l'inclusion de leur \fIheader\fP.
 
 .PS
-box "N2"
-box "Pixel"    at 1st box + (1.2, 0)
-box "Image"    at 2nd box + (1.5, 0)
-box "Maillage" at 3rd box - (0,   1)
-box "Triangle" at 4th box - (1.5, 0)
-box "Cavite"   at 5th box - (0,   1)
-box "Tableau"  at 6th box + (1.5, 0)
+box "\fCN2\fP"
+box "\fCPixel\fP"    at 1st box + (1.2, 0)
+box "\fCImage\fP"    at 2nd box + (1.5, 0)
+box "\fCMaillage\fP" at 3rd box - (0,   1)
+box "\fCTriangle\fP" at 4th box - (1.5, 0)
+box "\fCCavite\fP"   at 5th box - (0,   1)
+box "\fCTableau\fP"  at 6th box + (1.5, 0)
 arrow from 1st box .e  to 2nd box .w thickness 1.7
 arrow from 2nd box .e  to 3rd box .w
 arrow from 2nd box .s  to 5th box .n
@@ -149,4 +149,40 @@ Triangle
 Cette classe représente un rassemblement de trois \fCPixel\fPs
 et c'est à ce niveau qu'on implémente en particulier la méthode
 \fCbool\ cercleCirconscritContient(N2)\fP, au coeur de notre
-algorithme de maillage.
+algorithme de maillage. Pour cette méthode on calcule le déterminant
+d'une matrice en stockant certaines valeurs uniquement par souci
+d'écriture, on laisse le compilateur éviter les répétitions
+inutiles en général.
+
+.SH
+Cavité
+.LP
+On construit la région à mettre à jour dans notre méthode
+comme à la fois un tableau des triangles à supprimer
+(ceux dont le cercle circonscrit contient le point à ajouter)
+et un tableau des pixels à partir desquels on va insérer les
+nouveaux triangles.
+
+C'est le constructeur
+\fCCavite::Cavite(const\ Tableau<Triangle>&,\ const\ Pixel&)\fP
+qui détermine ces tableaux à partir des triangles de notre maillage
+et du point qu'on veut ajouter.
+
+.SH
+Image
+.LP
+Cette classe est quasiment une copie de la classe \fCPGMImage\fP
+fournie dans les documents de l'énoncé. On a décidé de ne pas
+séparer les concepts d'image et de lecteur de fichier image car
+notre but n'était pas d'implémenter un outil pour un panel varié
+d'images dans le sens abstrait, mais de tester si la méthode de
+compression était intéressante pour des images exemples.
+
+Il n'était ainsi pas nécessaire de donner plus de sens à une image
+que le format qu'on comptait tester, représenté principalement par
+l'attribut \fCchar\ *_data\fP.
+
+Pour revenir au stockage \fCint\fP des couleurs dans la classe
+\fCPixel\fP, on stocke ici la couleur comme \fCchar\fP mais on la
+distribue comme \fCint\fP soit \fIvia\fP les accesseurs \fCpixel(...)\fP
+soit \fIvia\fP l'accesseur \fCoperator()(int, int)\fP.
