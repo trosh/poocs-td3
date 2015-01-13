@@ -81,16 +81,25 @@ box "Maillage" at 3rd box - (.5,  1)
 box "Triangle" at 4th box - (1.5, 0)
 box "Cavite"   at 5th box - (0,   1)
 box "Tableau"  at 6th box + (1.5, 0)
-arrow from 1st box .e to 2nd box .w
-arrow from 2nd box .e to 3rd box .w
+arrow from 1st box .e  to 2nd box .w
+arrow from 2nd box .e  to 3rd box .w
 arrow from 2nd box .sw to 5th box .n
-arrow from 3rd box .s to 4th box .n
-arrow from 5th box .e to 4th box .w
-arrow from 5th box .s to 6th box .n
+arrow from 3rd box .s  to 4th box .n
+arrow from 5th box .e  to 4th box .w
+arrow from 5th box .s  to 6th box .n
 arrow from 6th box .ne to 4th box .sw
-arrow from 7th box .n to 4th box .s
-arrow from 7th box .w to 6th box .e
+arrow from 7th box .n  to 4th box .s
+arrow from 7th box .w  to 6th box .e
 .PE
+
+.SH
+Tableau
+.LP
+
+Cette classe \fCtemplate\fP nous a fait un exercice de classe
+génèrique: on peut accéder à ou modifier une liste d'élèments
+génèrique. On réduit le nombre d'allocations nécessaires au passage
+à l'échelle en séparant les concepts de taille et de capacité.
 
 .DS L
 .fam C
@@ -102,24 +111,4 @@ MatC.hh MatC.cc
 main.cc
 Makefile
 .fam N
-.DE
-
-.SH
-\s+2Accesseurs\s-2
-.LP
-
-.SH
-\s+2Mutateurs\s-2
-.LP
-
-.SH
-\s+2Opérations d'algèbre linéaire\s-2
-.LP
-
-.DS L
-\(bu\fC  Vect   Vect::operator+(Vect)    \fP addition vectorielle
-\(bu\fC  Vect   Vect::operator-(Vect)    \fP soustraction vectorielle
-\(bu\fC  double Vect::operator*(Vect)    \fP produit scalaire
-\(bu\fC  Vect   Vect::operator*(double)  \fP produit vecteur par un scalaire
-\(bu\fC  Vect Mat::operator*(Vect)       \fP produit matrice vecteur
 .DE
