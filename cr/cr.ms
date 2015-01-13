@@ -76,14 +76,14 @@ selon l'inclusion de leur \fIheader\fP.
 .PS
 box "N2"
 box "Pixel"    at 1st box + (1.2, 0)
-box "Image"    at 2nd box + (1,   0)
-box "Maillage" at 3rd box - (.5,  1)
+box "Image"    at 2nd box + (1.5, 0)
+box "Maillage" at 3rd box - (0,   1)
 box "Triangle" at 4th box - (1.5, 0)
 box "Cavite"   at 5th box - (0,   1)
 box "Tableau"  at 6th box + (1.5, 0)
 arrow from 1st box .e  to 2nd box .w thickness 1.7
 arrow from 2nd box .e  to 3rd box .w
-arrow from 2nd box .sw to 5th box .n
+arrow from 2nd box .s  to 5th box .n
 arrow from 3rd box .s  to 4th box .n
 arrow from 5th box .e  to 4th box .w dashed
 arrow from 5th box .s  to 6th box .n
@@ -117,6 +117,12 @@ N2
 On implémente ici une classe très simple reprèsentant des coordonnées
 entières à deux dimensions, et quelques opérations de base.
 
+Par exemple, \fCoperator==\fP rendait aisé de tester si un point
+était présent dans un maillage sans avoir à implémenter
+\fCbool\ *_pixels_presents\fP. C'est par contre une méthode plus
+lente qu'avec ce tableau.
+
+.ne 5
 .SH
 Pixel
 .LP
@@ -126,15 +132,21 @@ format \fC.pgm\fP, on aurait pû stocker la couleur dans un \fCchar\fP,
 comme ce sera le cas dans une \fCImage\fP, mais pour pouvoir
 manipuler les \fCPixel\fPs avec aise on a fait ce choix.
 
+On a ainsi prévu que pour le calcul d'un barycentre on voudra pouvoir
+écrire :
 
 .DS L
 .fam C
-POOCS.hh
-Vect.hh Vect.cc
-Mat.hh  Mat.cc
-MatG.hh MatG.cc
-MatC.hh MatC.cc
-main.cc
-Makefile
-.fam N
+Pixel p = (p1 + p2 + p3) / 3;
+.fam P
 .DE
+
+Sans se soucier d'\fIoverflow\fP sur les \fCPixel\fPs intermédiaires.
+
+.SH
+Triangle
+.LP
+Cette classe représente un rassemblement de trois \fCPixel\fPs
+et c'est à ce niveau qu'on implémente en particulier la méthode
+\fCbool\ cercleCirconscritContient(N2)\fP, au coeur de notre
+algorithme de maillage.
