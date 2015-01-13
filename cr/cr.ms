@@ -52,9 +52,26 @@ au plus grand écart dans notre maillage. On travaille maintenant
 sur le barycentre $P$ de ce triangle, c'est le point à partir
 duquel on va rendre notre maillage plus précis.
 
+Le processus précis est décrit dans l'énoncé et consiste à vider
+une cavité de triangles autour de $P$ et reconstruire de nouveaux
+triangles plus petits.
+
+Cet algorithme de maillage privilegiera souvent trop certaines
+régions de l'image, mais en limitant la granularité à celle du pixel,
+on répartit l'importance donnée aux zones de l'image.
+
+.ne 6
 .SH
 \s+2Mise en place\s-2
 .LP
+On a implémenté les différentes parties de notre outil avec
+pour chacune une classe décrite entièrement dans un fichier
+\fC.hh\fP et un fichier \fC.cc\fP si ce n'est pas une classe
+\fCtemplate\fP (dans quel cas on construit un objet \fC.o\fP
+pour cette classe).
+
+Voici un graphe d'inclusion qui représente ces classes
+selon l'inclusion de leur \fIheader\fP.
 
 .PS
 box "N2"
