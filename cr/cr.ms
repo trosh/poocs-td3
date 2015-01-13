@@ -25,10 +25,10 @@ On pourra retrouver un affichage de l'image d'origine en dessinant
 les triangles remplis de la couleur moyenne de celles de ses points.
 
 La "compression" se fait sur la formation de triangles qu'on
-privilégiera dans les zone avec des grandes differences de couleur.
+privilégiera dans les zones avec des grandes differences de couleur.
 
 On n'alignera \fIpas\fP les côtés des triangles avec les lignes
-qu'on peut distinguer dans l'image mais on construira toujours de
+qu'on pourra distinguer dans l'image mais on construira toujours de
 nouveaux triangles dans la zone qui diffère le plus de l'image
 (sauf lorsque l'on a atteint une résolution trop fine).
 
@@ -48,7 +48,7 @@ l'\fIécart\fP en $T$ correspond à la différence absolue entre
 $C$ et la couleur de l'image au barycentre des points du triangle.
 
 Ceci nous permet d'une itération à l'autre de choisir le triangle
-au plus grand écart dans notre maillage. On travaille maintenant
+au plus grand \fIécart\fP dans notre maillage. On travaille maintenant
 sur le barycentre $P$ de ce triangle, c'est le point à partir
 duquel on va rendre notre maillage plus précis.
 
@@ -97,7 +97,7 @@ Tableau (\fCTableau<T>\fP)
 .LP
 Cette classe \fCtemplate\fP nous a fait un exercice sur les classes
 génériques: on peut accéder à ou modifier une liste d'élèments
-générique. On réduit le nombre d'allocations nécessaires au passage
+génériques. On réduit le nombre d'allocations nécessaires au passage
 à l'échelle en séparant les concepts de \fItaille\fP et de \fIcapacité\fP.
 
 La méthode \fCretaille\fP peut faire appel à \fCreserve\fP si on demande
@@ -114,7 +114,7 @@ préserver l'usage \fIPOO\fP.
 .SH
 N2
 .LP
-On implémente ici une classe très simple reprèsentant des coordonnées
+On implémente ici une classe très simple représentant des coordonnées
 entières à deux dimensions, et quelques opérations de base.
 
 Par exemple, \fCoperator==\fP rendait aisé de tester si un point
@@ -130,7 +130,7 @@ Cette classe hérite de \fCN2\fP et lui ajoute une valeur de couleur
 \fItypedef'd\fP à un \fCint\fP. Sachant qu'on travaille avec le
 format \fC.pgm\fP, on aurait pû stocker la couleur dans un
 \fCunsigned char\fP, comme ce sera le cas dans une \fCImage\fP,
-mais pour pouvoir manipuler les \fCPixel\fPs avec aise on a fait
+mais pour pouvoir manipuler les \fCPixel\fPs avec aisance on a fait
 ce choix.
 
 On a ainsi prévu que pour le calcul d'un barycentre on voudra pouvoir
@@ -144,6 +144,8 @@ Pixel p = (p1 + p2 + p3) / 3;
 
 Sans se soucier d'\fIoverflow\fP sur les \fCPixel\fPs intermédiaires.
 
+La couleur de ce \fCPixel\fP est $C$ telle que définie plus haut.
+
 .SH
 Triangle
 .LP
@@ -151,7 +153,7 @@ Cette classe représente un rassemblement de trois \fCPixel\fPs
 et c'est à ce niveau qu'on implémente en particulier la méthode
 \fCbool\ cercleCirconscritContient(N2)\fP, au coeur de notre
 algorithme de maillage. Pour cette méthode on calcule le déterminant
-d'une matrice en stockant certaines valeurs uniquement par souci
+d'une matrice en stockant certaines valeurs uniquement par soucis
 d'écriture, on laisse le compilateur éviter les répétitions
 inutiles en général.
 
@@ -198,4 +200,35 @@ pour un usage très varié.
 Maillage
 .LP
 Voici la classe qui représente l'objet qu'on veut construire
-\fIin fine\fP.
+\fIin fine\fP. C'est un tableau de triangles avec l'image sur
+laquelle on travaille comme attribut intrinséquement lié au maillage
+qui va le représenter.
+
+On initialise le maillage avec le constructeur
+\fCMaillage::Maillage(Image&)\fP qui pointe \fCImage* _img\fP
+vers l'image étudiée et initialise le maillage par défaut à ses
+dimensions. Voici le type de maillage initial qu'on construit
+(deux triangles) :
+
+.PS
+box wid 2 ht 1.5
+line from 1st box .sw to 1st box .ne
+.PE
+
+La méthode \fCajoute(const int itermax, const int precision)\fP
+itère sur le maillage tant que \fIl'écart\fP en chaque triangle est
+trop important (et que \fCiter < itermax\fP). À chaque itération
+on détermine (parmis les triangles dont le barycentre n'est
+pas un point d'un triangle du maillage) quel triangle $T$ vérifie
+le plus grand \fIécart\fP. On détermine la cavité à partir de son
+barycentre, on supprime les triangles mis en relief et on ajoute
+tous les nouveaux triangles.
+
+La méthode \fCsupprime\fP réordonne le tableau en sa fin, et on
+sait quoi supprimer uniquement par son index qu'on veut garder
+cohérent pendant la suppression. Avec la garantie qu'on a une liste
+croissante des index des triangles à supprimer, on itère en arrière
+sur ce tableau et on garantit qu'on a supprimé uniquement les bons
+triangles.
+
+
