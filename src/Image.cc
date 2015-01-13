@@ -12,31 +12,26 @@ Image::Image(const char * filename) throw (PGMException)
 	std::string line;
 	std::getline(file, line);
 	bool is_binary = true;
-	if (line == "P5")
-		is_binary = true;
-	else if (line == "P2" )
-		is_binary = false;
-	else
-		throw PGMException("Bad PGM Header");
+	if      (line == "P5") is_binary = true;
+	else if (line == "P2") is_binary = false;
+	else throw PGMException("Bad PGM Header");
 	std::getline(file, line);
-	if (line[0] == '#')
-		std::getline(file, line);
+	if (line[0] == '#') std::getline(file, line);
 	std::istringstream is(line);
 	is >> _width >> _height;
-	const unsigned fullsize = _height*_width;
+	const unsigned fullsize = _height * _width;
 	file >> _maxval;
-	if (_maxval > 255)
-		throw PGMException("Too large max value");
+	if (_maxval > 255) throw PGMException("Too large max value");
 	_data = new unsigned char[fullsize];
 	if (is_binary)
-		// reinterpret_cast permet de respecter le format d'entree de file.read
-		// tout en utilisant un tableau statique
+		// reinterpret_cast permet de respecter le format d'entree de
+		// file.read tout en utilisant un tableau statique
 		file.read(reinterpret_cast<char*>(_data), fullsize);
 	else
 		for (unsigned i=0,v; i<fullsize; ++i) {
 			// on passe par une variable intermédiaire car on utilise
-			// la valeur deux fois et que c'est le resultat d'une operation
-			// >> qu'on ne peut reutiliser que si on la stocke
+			// la valeur deux fois et que c'est le resultat d'une
+			// operation >> qu'on ne peut reutiliser que si on la stocke
 			// v est de type unsigned int
 			file >> v;
 			if (v > _maxval) throw PGMException("Too big data");
@@ -44,16 +39,28 @@ Image::Image(const char * filename) throw (PGMException)
 		}
 }
 
-Pixel& Image::pixel(const N2& X) const {
+Pixel Image::pixel(const N2& X) const {
 	if (X.x() < 0 || X.x() > _width
-	 || Y.x() < 0 || Y.y() > _height)
+	 || X.y() < 0 || X.y() > _height)
 		throw PGMException("Bad coords");
-	return Pixel(X, _data[X.y()*_width+X.x()];
+	return Pixel(X, _data[X.y()*_width+X.x()]);
 }
 
-Pixel& Image::pixel(const int x, const int y) const {
+Pixel Image::pixel(const int x, const int y) const {
 	if (x < 0 || x > _width
 	 || x < 0 || y > _height)
 		throw PGMException("Bad coords");
-	return Pixel(x, y, _data[X.y()*_width+X.x()];
+	return Pixel(x, y, _data[y*_width+x]);
+}
+
+unsigned Image::numero(const N2& p) const {
+	return p.y() * _width + p.x();
+}
+
+int Image::operator()(const N2& p) const {
+	return _data[p.y()*_width+p.x()];
+}
+
+int Image::operator()(int y, int x) const {
+	return _data[y*_width+x];
 }

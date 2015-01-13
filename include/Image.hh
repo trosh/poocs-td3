@@ -1,6 +1,9 @@
 #ifndef IMAGE_HH
 #define IMAGE_HH
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <Pixel.hh>
 
 class PGMException {
@@ -25,18 +28,21 @@ private:
 public:
 	Image();
 	Image(int, int);
-	Image(const char*);
+	Image(const char*) throw (PGMException);
 	~Image() { delete[] _data; }
 	// ces methodes n'ont quasiment aucun cout, il est logique d'indiquer
 	// au compilateur de ne pas leur affubler un overhead de fonction c
 	inline unsigned width() const { return _width; }
 	inline unsigned height() const { return _height; }
+	inline unsigned maxval() const { return _maxval; }
+	Pixel pixel(const N2&) const;
+	Pixel pixel(const int, const int) const;
+	unsigned numero(const N2&) const;
 	// on prévoit qu'il faudra faire beaucoup de sommes de couleurs,
 	// on s'authorise à overflow au cours de l'opération en renvoyant
 	// un int plutôt qu'un char
-	inline unsigned operator()(int i, int j) const {
-		return _data[i*_width+j];
-	}
+	int operator()(const N2&) const;
+	int operator()(int, int) const;
 };
 
 #endif // IMAGE_HH

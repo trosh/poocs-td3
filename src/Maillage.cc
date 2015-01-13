@@ -1,24 +1,33 @@
 #include <Maillage.hh>
-#include <iostream>
-#include <fstream>
 
-Maillage::Maillage(const Image& img) _image(img) {
-	int h = img.nbLignes()-1,
-	    w = img.nbColonnes()-1;
+Maillage::Maillage(Image& img)
+: _image(&img) {
+	_tri.reserve(1024);
+	int h = img.height(),
+	    w = img.width();
+	_in = new bool[h*w];
+	for (int i=0; i<h*w; i++)
+		_in[i] = false;
+	h--;
+	w--;
 	Triangle T1(img.pixel(0, 0),
-	            img.pixel(0, h),
-	            img.pixel(w, 0));
-	Triangle T2(img.pixel(w, h),
 	            img.pixel(w, 0),
 	            img.pixel(0, h));
+	Triangle T2(img.pixel(w, h),
+	            img.pixel(0, h),
+	            img.pixel(w, 0));
 	_tri.ajoute(T1);
 	_tri.ajoute(T2);
+}
+
+Maillage::~Maillage() {
+	delete[] _in;
 }
 
 void Maillage::
 sauvegarde(const char * filename) const {
 	std::cout << "Saving '" << filename
-	          << "' with " << m_triangles.taille() << " triangles\n";
+	          << "' with " << _tri.taille() << " triangles\n";
 	// VTK File formats : www.vtk.org/VTK/img/file-formats.pdf
 	std::ofstream file(filename);
 	file << "# vtk DataFile Version 3.0\n"
@@ -27,18 +36,18 @@ sauvegarde(const char * filename) const {
 	     << "DATASET UNSTRUCTURED_GRID\n"
 	     << "\n"
 	     << "POINTS ";
-	std::map<int,int> coord_to_pos;
+	std::map<int, int> coord_to_pos;
 	std::ostringstream nodedata_oss;
 	{
 		std::ostringstream node_oss;
-		for (int i=0; i<m_triangles.taille(); ++i) {
-			const Triangle & tr = m_triangles[i];
+		for (int i=0; i<_tri.taille(); ++i) {
+			const Triangle & tr = _tri[i];
 			for (int j=0; j<3; ++j) {
 				const Pixel & pixel = tr(j);
 				std::pair<std::map<int,int>::iterator,bool> inserter
 				= coord_to_pos.insert(
 					std::make_pair<int,int>(
-						m_image.numero(pixel),
+						_image->numero(pixel),
 						coord_to_pos.size()));
 				if (inserter.second) {
 					node_oss << +pixel.x() << " "
@@ -50,28 +59,28 @@ sauvegarde(const char * filename) const {
 		file << coord_to_pos.size() << " float\n"
 		     << node_oss.str() << "\n";
 	}
-	file << "CELLS " 
-	     << m_triangles.taille() << " "
-	     << 4*m_triangles.taille() << "\n";
-	for (int i=0; i<m_triangles.taille(); ++i) {
-		const Triangle & tr = m_triangles[i];
+	file << "CELLS "
+	     << _tri.taille() << " "
+	     << 4*_tri.taille() << "\n";
+	for (int i=0; i<_tri.taille(); ++i) {
+		const Triangle & tr = _tri[i];
 		file << "3 ";
 		for (int j=0; j<3; ++j) {
 			const Pixel & pixel = tr(j);
-			file << coord_to_pos[m_image.numero(pixel)] << " ";
+			file << coord_to_pos[_image->numero(pixel)] << " ";
 		}
 		file << "\n";
 	}
 	file << "\n"
-	     << "CELL_TYPES " << m_triangles.taille() << "\n";
-	for (int i=0; i<m_triangles.taille(); ++i)
+	     << "CELL_TYPES " << _tri.taille() << "\n";
+	for (int i=0; i<_tri.taille(); ++i)
 		file << "5\n";
 	file << "\n"
-	     << "CELL_DATA " << m_triangles.taille() << "\n"
+	     << "CELL_DATA " << _tri.taille() << "\n"
 	     << "SCALARS cell_data int 1\n"
 	     << "LOOKUP_TABLE default\n";
-	for (int i=0; i<m_triangles.taille(); ++i) {
-		const Triangle & tr = m_triangles[i];
+	for (int i=0; i<_tri.taille(); ++i) {
+		const Triangle & tr = _tri[i];
 		file << tr.barycentre().couleur() << "\n";
 	}
 	file << "\n"
@@ -82,69 +91,44 @@ sauvegarde(const char * filename) const {
 }
 
 int abs(int n) {
-	if (n>=0) return n;
-	return -n;
+	if (n<0) return -n;
+	return n;
 }
 
 void Maillage::ajoute(const int n, const int precision) {
-	int t = 0;
-	int completed = 0;
 	for (int i=0; i<n; i++) {
-		if (t >= _tri.taille())
-			t = 0;
-		Pixel& p = _tri[t].barycentre();
-		if (abs(p.col() - img.pixel(p).col()) <= precision) {
-			t++;
-			completed++;
-			if (completed == _tri.taille()) return;
-			continue;
+		Pixel p;
+		int max_ecart = 0;
+		bool flag = true;
+		for (int t=0; t<_tri.taille(); t++) {
+			const Pixel& cp = _tri[t].barycentre();
+			if (_in[cp.y()*_image->width()+cp.x()]) continue;
+			flag = false;
+			int ecart = abs(cp.couleur() - (*_image)(cp));
+			if (ecart > max_ecart) {
+				p = cp;
+				max_ecart = ecart;
+			}
 		}
-		completed = 0;
-		Tableau<Pixel> cavite(32);
-		for (int j=0; j!=_tri.taille(); ) {
-			Triangle& Tj = _tri[j];
-			// FIND OUT IF CIRCONSCRIT
-			if (!Tj.cercleCirconscritContient(p)) {
-				j++;
-				continue;
-			}
-			// ADD TO CAVITE
-			bool p0in = p1in = p2in = false;
-			for (k=0; k<cavite.taille(); k++) {
-				Pixel& Pk = cavite[k];
-				if (Pk == Tj(0)) p0in = true;
-				if (Pk == Tj(1)) p1in = true;
-				if (Pk == Tj(2)) p2in = true;
-			}
-			if (not p0in) cavite.ajoute(Tj(0));
-			if (not p1in) cavite.ajoute(Tj(1));
-			if (not p2in) cavite.ajoute(Tj(2));
-			_tri.supprime(j);
-			Tj = NULL;
-			// SORT BY ATAN2
-			Tableau<float> angles(cavite.taille());
-			for (k=0; k<cavite.taille(); k++) {
-				Pixel& Pk = cavite[k];
-				angles.ajoute(atan2(Pk.x()-p.x(), Pk.y()-p.y()));
-			}
-			for (k=0; k<angles.taille()-1; k++) {
-				float& Fk = angle[k];
-				for (l=k+1; l<angles.taille(); l++) {
-					float& Fl = angles[l];
-					if (Fl < Fk) {
-						Pixel tempP = cavite[l];
-						cavite[l] = cavite[k];
-						cavite[k] = tempP;
-						float tempF = Fl;
-						Fl = Fk;
-						Fk = tempF;
-					}
-				}
-			}
-			for (k=0; k<cavite.taille()-1; k++) {
-				Triangle Tk(cavite[k], cavite[k+1], p);
-				_tri.ajoute(Tk);
-			}
-		t++;
+		if (i%2000 == 0)
+			std::cout << i << " "
+			          << max_ecart << " " << std::endl;
+		if (max_ecart <= precision) {
+			std::cout << "max_ecart <= precision :)\n";
+			return;
+		}
+		p = Pixel(p, (*_image)(p));
+		Cavite cavite(_tri, p);
+		const Tableau<int>& AT = cavite.AnciensTriangles();
+		// ON EST SÛR QUE AT[I] < AT[I+1]
+		for (int k=AT.taille()-1; k>=0; k--)
+			_tri.supprime(AT[k]);
+		const Tableau<Pixel>& PDC = cavite.pixelsDuContour();
+		for (int k=0; k<PDC.taille(); k++) {
+			Triangle Tk(PDC[k], PDC[(k+1)%PDC.taille()], p);
+			_tri.ajoute(Tk);
+			_in[p.y()*_image->width()+p.x()] = true;
+		}
 	}
+	std::cout << "reached n\n";
 }

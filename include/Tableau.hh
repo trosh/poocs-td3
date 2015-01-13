@@ -4,6 +4,10 @@
 #include <iostream>
 #include <cassert>
 
+enum TableauError {
+	BadIndex
+};
+
 template<typename T>
 class Tableau;
 
@@ -126,7 +130,10 @@ template<typename T>
 T&
 Tableau<T>::
 operator[](int key) const {
-	assert(key>=0 && key<_taille);
+	if (key<0 || key>=_taille) {
+		std::cout << key << " " << _taille << std::endl;
+		throw BadIndex;
+	}
 	return _contenu[key];
 }
 

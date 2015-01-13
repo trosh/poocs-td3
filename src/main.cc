@@ -1,62 +1,37 @@
-#include <iostream>
-#include <Tableau.hh>
-#include <N2.hh>
-#include <Pixel.hh>
-#include <Triangle.hh>
-
-typedef struct { double r, i; } C;
-
-std::ostream& operator<<(std::ostream& o, const C& c) {
-	o << c.r;
-	if (c.i > 0)
-		o << "+";
-	return o << c.i << "i";
-}
-
-using std::cout;
-using std::endl;
+#include <iostream> // cout
+#include <sstream>  // istringstream
+#include <fstream>  // ifstream
+#include <string>   // string
+#include <iomanip>  // setw
+#include <Image.hh> // -> Pixel -> N2
+#include <Maillage.hh> // -> Cavite + Triangle + Tableau
 
 int main() {
-	using namespace std;
-	// TABLEAU
-	cout << "TABLEAU<C> (COMPLEXES)" << endl;
-	Tableau<C> tab(5);
-	for (int i=0; i<5; i++) {
-		C c = {1.4+i, 1.4-i};
-		tab.ajoute(c);
+	Image img("Image/a.pgm");
+	const int statsize = 16;
+	int stats[statsize];
+	for (int i=0; i<statsize; ++i)
+		stats[i] = 0;
+	// HISTOGRAM
+	for (unsigned i=0; i<img.height(); ++i)
+		for (unsigned j=0; j<img.width(); ++j)
+			stats[statsize*img(i,j)/256]++;
+	std::cout << "Image " << img.width()
+	          << " x " << img.height()
+	          << " by " << img.maxval() + 1 << " values\n";
+	std::cout << "Stats:\n";
+	const unsigned fullsize = img.height() * img.width();
+	for (int i=0; i<statsize; ++i) {
+		// si on met la multiplication par 100  à la fin, on obtient 0
+		// parce que stats est un tableau d'entiers et que pour tout i,
+		// stats[i] < fullsize
+		const unsigned linesize = 100 * stats[i]/fullsize;
+		std::cout << std::setw(3) << linesize << "% : ";
+		for (unsigned j=0; j<linesize; ++j)
+			std::cout << "*";
+		std::cout << "\n";
 	}
-	cout << tab << endl;
-	Tableau<C> tab2 = tab;
-	cout << "TAB2(TAB1)" << endl;
-	tab.~Tableau<C>();
-	cout << "TAB1.~TABLEAU<C>()" << endl;
-	cout << tab2 << endl;
-	// N2
-	cout << endl << "N2 (SOMME)" << endl;
-	N2 p(2, 4), q(4, 2);
-	Tableau<N2> tabc(3);
-	tabc.ajoute(p);
-	tabc.ajoute(q);
-	tabc.ajoute(p+q);
-	cout << tabc << endl;
-	// PIXELS
-	cout << endl << "PIXEL (BARYCENTRE)" << endl;
-	Pixel P1(2, 2, 10), P2(4, 5, 20);
-	Tableau<Pixel> tabp(3);
-	tabp.ajoute(P1);
-	tabp.ajoute(P2);
-	tabp.ajoute((P1+P2)/2);
-	cout << tabp << endl;
-	// TRIANGLES
-	cout << endl << "TABLEAU (BARYCENTRE)" << endl;
-	Triangle T(tabp[0], tabp[1], tabp[2]);
-	tabp.ajoute(T.barycentre());
-	cout << tabp << endl;
-	// CIRCONSCRIT
-	cout << endl << "CIRCONSCRIT" << endl;
-	T = Triangle(Pixel(0, 0, 0),
-	             Pixel(3, 0, 0),
-	             Pixel(0, 3, 0));
-	cout << T.cercleCirconscritContient(N2(0, 0)) << endl;
-	return 0;
+	Maillage maille(img);
+	maille.ajoute(40000, 10);
+	maille.sauvegarde("a.vtk");
 }
