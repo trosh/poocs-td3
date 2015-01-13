@@ -67,7 +67,7 @@ on répartit l'importance donnée aux zones de l'image.
 On a implémenté les différentes parties de notre outil avec
 pour chacune une classe décrite entièrement dans un fichier
 \fC.hh\fP et un fichier \fC.cc\fP si ce n'est pas une classe
-\fCtemplate\fP (dans quel cas on construit un objet \fC.o\fP
+\fCtemplate\fP (et on construit un objet \fC.o\fP
 pour cette classe).
 
 Voici un graphe d'inclusion qui représente ces classes
@@ -211,7 +211,7 @@ dimensions. Voici le type de maillage initial qu'on construit
 (deux triangles) :
 
 .PS
-box wid 2 ht 1.5
+box wid 1.2 ht .7
 line from 1st box .sw to 1st box .ne
 .PE
 
@@ -231,4 +231,36 @@ croissante des index des triangles à supprimer, on itère en arrière
 sur ce tableau et on garantit qu'on a supprimé uniquement les bons
 triangles.
 
+La couleur $C$ du barycentre ne nous intéresse plus, on voudra
+insérer la couleur de l'image en son point avec les coordonnées
+du barycentre.
+(\fC p = Pixel(p, (*_image)(p)); \fP)
 
+On construit les nouveaux triangles à partir d'un tableau de pixels.
+On fait bien attention à les construire dans le sens trigonométrique
+et à ne pas oublier le triangle qui contient les dernier et premier
+points du tableau.
+
+Une fois qu'on a suffisement itéré, on peut \fCsauvegarder\fP le
+maillage dans un fichier \fC.vtk\fP qu'on peut visualiser avec
+\fIParaview\fP. Plusieurs captures d'écran en \fC.png\fP des résultats
+sont à la racine du projet.
+
+.SH
+\s+2Conclusion\s-2
+.LP
+On arrive dans ce projet à construire l'outil demandé.
+La construction des maillages n'est pourtant pas vraiment
+satisfaisante:
+
+\(bu L'image telle qu'on peut l'afficher après compression a perdu
+beaucoup de qualité
+
+\(bu Pour une précision suffisamment correcte ($<10$) et dans les
+limites de notre implémentation, le temps de calcul est beaucoup trop
+long ($approx 1$ minute).
+
+\(bu On n'a pas particulièrement gagné en taille de fichier.
+Si on avait un format plus spécifique à notre maillage que le
+format \fC.vtk\fP (en binaire, etc...), on pourrait par contre
+réduire assez clairement la taille du fichier.
