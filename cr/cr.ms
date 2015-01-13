@@ -128,9 +128,10 @@ Pixel
 .LP
 Cette classe hérite de \fCN2\fP et lui ajoute une valeur de couleur
 \fItypedef'd\fP à un \fCint\fP. Sachant qu'on travaille avec le
-format \fC.pgm\fP, on aurait pû stocker la couleur dans un \fCchar\fP,
-comme ce sera le cas dans une \fCImage\fP, mais pour pouvoir
-manipuler les \fCPixel\fPs avec aise on a fait ce choix.
+format \fC.pgm\fP, on aurait pû stocker la couleur dans un
+\fCunsigned char\fP, comme ce sera le cas dans une \fCImage\fP,
+mais pour pouvoir manipuler les \fCPixel\fPs avec aise on a fait
+ce choix.
 
 On a ainsi prévu que pour le calcul d'un barycentre on voudra pouvoir
 écrire :
@@ -157,7 +158,7 @@ inutiles en général.
 .SH
 Cavité
 .LP
-On construit la région à mettre à jour dans notre méthode
+On construit la région à mettre à jour dans notre modèle
 comme à la fois un tableau des triangles à supprimer
 (ceux dont le cercle circonscrit contient le point à ajouter)
 et un tableau des pixels à partir desquels on va insérer les
@@ -180,9 +181,21 @@ compression était intéressante pour des images exemples.
 
 Il n'était ainsi pas nécessaire de donner plus de sens à une image
 que le format qu'on comptait tester, représenté principalement par
-l'attribut \fCchar\ *_data\fP.
+l'attribut \fCunsigned char\ *_data\fP.
 
 Pour revenir au stockage \fCint\fP des couleurs dans la classe
-\fCPixel\fP, on stocke ici la couleur comme \fCchar\fP mais on la
-distribue comme \fCint\fP soit \fIvia\fP les accesseurs \fCpixel(...)\fP
-soit \fIvia\fP l'accesseur \fCoperator()(int, int)\fP.
+\fCPixel\fP, on stocke ici la couleur comme \fCunsigned char\fP
+mais on la distribue comme \fCint\fP soit \fIvia\fP les accesseurs
+\fCpixel(...)\fP soit \fIvia\fP l'accesseur \fCoperator()(int, int)\fP.
+
+Le lecteur de fichier \fC.pgm\fP se fait \fIvia\fP le constructeur
+\fCImage::Image(const char*)\fP. Celui-ci fait peu de vérifications
+quant au contenu, mais encore une fois cet outil n'est pas fait
+pour un usage très varié.
+
+.ne 3
+.SH
+Maillage
+.LP
+Voici la classe qui représente l'objet qu'on veut construire
+\fIin fine\fP.
