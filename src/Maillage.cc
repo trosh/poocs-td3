@@ -90,21 +90,14 @@ sauvegarde(const char * filename) const {
 	     << nodedata_oss.str();
 }
 
-int abs(int n) {
-	if (n<0) return -n;
-	return n;
-}
-
 void Maillage::ajoute(const int n, const int precision) {
 	for (int i=0; i<n; i++) {
 		Pixel p;
 		int max_ecart = 0;
-		bool flag = true;
 		for (int t=0; t<_tri.taille(); t++) {
 			const Pixel& cp = _tri[t].barycentre();
-			if (_in[cp.y()*_image->width()+cp.x()]) continue;
-			flag = false;
-			int ecart = abs(cp.couleur() - (*_image)(cp));
+			if (_in[_image->numero(cp)]) continue;
+			int ecart = std::abs(cp.couleur() - (*_image)(cp));
 			if (ecart > max_ecart) {
 				p = cp;
 				max_ecart = ecart;
@@ -127,7 +120,7 @@ void Maillage::ajoute(const int n, const int precision) {
 		for (int k=0; k<PDC.taille(); k++) {
 			Triangle Tk(PDC[k], PDC[(k+1)%PDC.taille()], p);
 			_tri.ajoute(Tk);
-			_in[p.y()*_image->width()+p.x()] = true;
+			_in[_image->numero(p)] = true;
 		}
 	}
 	std::cout << "reached n\n";

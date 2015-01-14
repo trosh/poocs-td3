@@ -6,8 +6,12 @@
 #include <Image.hh> // -> Pixel -> N2
 #include <Maillage.hh> // -> Cavite + Triangle + Tableau
 
-int main() {
-	Image img("Image/a.pgm");
+int main(int argc, char **argv) {
+	if (argc < 3) {
+		std::cout << "usage: ./main filename.pgm filename.vtk\n";
+		return 1;
+	}
+	Image img(argv[1]);
 	const int statsize = 16;
 	int stats[statsize];
 	for (int i=0; i<statsize; ++i)
@@ -33,5 +37,5 @@ int main() {
 	}
 	Maillage maille(img);
 	maille.ajoute(40000, 10);
-	maille.sauvegarde("a.vtk");
+	maille.sauvegarde(argv[2]);
 }

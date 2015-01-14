@@ -31,24 +31,28 @@ operator()(const int n) const {
 	throw BadValue;
 }
 
-int SQ(int n) {
+long long int SQ(int n) {
 	return n*n;
 }
 
 bool Triangle::
 cercleCirconscritContient(const N2& d) const {
 	long long int D,
-		A2 = SQ(_0.x()) - SQ(d.x()) + SQ(_0.y()) - SQ(d.y()),
-		B2 = SQ(_1.x()) - SQ(d.x()) + SQ(_1.y()) - SQ(d.y()),
-		C2 = SQ(_2.x()) - SQ(d.x()) + SQ(_2.y()) - SQ(d.y());
-	D = (_0.x() - d.x())
-	  * ( (_1.y() - d.y()) * C2
-	    - (_2.y() - d.y()) * B2 );
-	D-= (_1.x() - d.x())
-	  * ( (_0.y() - d.y()) * C2
-	    - (_2.y() - d.y()) * A2 );
-	D+= (_2.x() - d.x())
-	  * ( (_0.y() - d.y()) * B2
-	    - (_1.y() - d.y()) * A2 );
+		x0 = _0.x(), y0 = _0.y(),
+		x1 = _1.x(), y1 = _1.y(),
+		x2 = _2.x(), y2 = _2.y(),
+		xd =  d.x(), yd =  d.y(),
+		A2 = SQ(x0) - SQ(xd) + SQ(y0) - SQ(yd),
+		B2 = SQ(x1) - SQ(xd) + SQ(y1) - SQ(yd),
+		C2 = SQ(x2) - SQ(xd) + SQ(y2) - SQ(yd);
+	D = (x0 - xd)
+	  * ( (y1 - yd) * C2
+	    - (y2 - yd) * B2 );
+	D-= (x1 - xd)
+	  * ( (y0 - yd) * C2
+	    - (y2 - yd) * A2 );
+	D+= (x2 - xd)
+	  * ( (y0 - yd) * B2
+	    - (y1 - yd) * A2 );
 	return D > 0;
 }
